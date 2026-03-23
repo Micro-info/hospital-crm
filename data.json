@@ -1,0 +1,39 @@
+[
+  {
+    "name": "Demo Kumar",
+    "age": "55",
+    "phone": "4564545545",
+    "disease": "normal",
+    "treatment": "Best",
+    "notes": "Nothing to say because all are greate",
+    "media": [
+      "1774248508464-1774204281380-WhatsApp Image 2026-03-21 at 12.32.56 PM.jpeg"
+    ],
+    "date": "2026-03-22T18:31:21.390Z",
+    "index": "0",
+    "gender": "Female",
+    "address": "",
+    "city": "",
+    "department": "General Medicine",
+    "status": "Discharged",
+    "doctor": "",
+    "bed": "",
+    "followup": "2026-03-17",
+    "remark": ""
+  },
+  {
+    "name": "Test Kumar",
+    "gender": "Male",
+    "age": "12",
+    "department": "General Medicine",
+    "phone": "1234323434",
+    "status": "New Case",
+    "disease": "Leg",
+    "treatment": "Ho gya",
+    "notes": "nothing",
+    "media": [
+      "1774240601123-WhatsApp Image 2026-03-21 at 12.32.56 PM.jpeg"
+    ],
+    "date": "2026-03-23T04:36:41.136Z"
+  }
+]
