@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #eef2f7;
+    }
+
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 250px;
+      text-align: center;
+    }
+
+    input {
+      width: 100%;
+      margin: 8px 0;
+      padding: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 8px;
+      background: #1e293b;
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h3>Hospital Login</h3>
+
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
+
+  <button onclick="login()">Login</button>
+</div>
+
+<script>
+
+function login(){
+
+const u = document.getElementById("user").value;
+const p = document.getElementById("pass").value;
+
+// 🔥 FIXED LOGIN
+if(u === "admin" && p === "1234"){
+  localStorage.setItem("loggedIn","true");
+  window.location.href = "/index.html";
+}else{
+  alert("Wrong Username or Password");
+}
+
+}
+
+</script>
+
+</body>
+</html>

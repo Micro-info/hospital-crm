@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Patient Report</title>
+</head>
+<body style="font-family:Arial;padding:20px;">
+
+<div id="content"></div>
+
+<script>
+
+async function load(){
+
+const urlParams = new URLSearchParams(window.location.search);
+const id = urlParams.get("id");
+
+const res = await fetch("/patients");
+const data = await res.json();
+
+const p = data[id];
+
+let images="";
+if(p.media){
+p.media.forEach(f=>{
+images+=`<img src="/uploads/${f}" style="width:100px;">`;
+});
+}
+
+document.getElementById("content").innerHTML=`
+<h2>PANCARDIA HOSPITAL</h2>
+<hr>
+
+<p><b>Name:</b> ${p.name}</p>
+<p><b>Age:</b> ${p.age}</p>
+<p><b>Phone:</b> ${p.phone}</p>
+
+<p><b>Department:</b> ${p.department}</p>
+<p><b>Status:</b> ${p.status}</p>
+
+<p><b>Disease:</b> ${p.disease}</p>
+<p><b>Treatment:</b> ${p.treatment}</p>
+
+<h3>Images</h3>
+${images}
+`;
+
+}
+
+load();
+
+</script>
+
+</body>
+</html>
