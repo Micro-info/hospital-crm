@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hospital CRM Pro</title>
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1e293b">
+
+  <!-- MOBILE FIX -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ICON -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- QR -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+  <script>
+    if (!localStorage.getItem("loggedIn")) {
+      window.location.href = "/login.html";
+    }
+  </script>
+
+  <style>
+    body { margin:0; font-family:Segoe UI; background:#eef2f7; }
+
+    .sidebar {
+      width:230px;
+      height:100vh;
+      background:#1e293b;
+      color:white;
+      position:fixed;
+      padding:15px;
+    }
+
+    .sidebar button {
+      width:100%;
+      margin:8px 0;
+      padding:10px;
+      background:#334155;
+      color:white;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+    }
+
+    .main {
+      margin-left:240px;
+      padding:15px;
+    }
+
+    .section {
+      background:white;
+      padding:12px;
+      border-radius:8px;
+      margin-bottom:10px;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(4,1fr);
+      gap:8px;
+    }
+
+    input, select, textarea {
+      padding:8px;
+      border:1px solid #ccc;
+      border-radius:5px;
+      width:100%;
+    }
+
+    textarea { grid-column: span 4; }
+
+    .patient {
+      background:white;
+      padding:12px;
+      border-radius:8px;
+      margin-top:10px;
+    }
+
+    img {
+      width:80px;
+      border-radius:6px;
+      margin:4px;
+    }
+
+    button.icon {
+      padding:6px 8px;
+      background:#e2e8f0;
+    }
+
+    /* 🔥 MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+
+      .main {
+        margin-left:0;
+      }
+
+      .sidebar {
+        width:100%;
+        height:auto;
+        position:relative;
+        display:flex;
+        justify-content:space-around;
+      }
+
+      .sidebar h3 {
+        display:none;
+      }
+
+      .grid {
+        grid-template-columns:1fr;
+      }
+
+      textarea {
+        grid-column: span 1;
+      }
+
+      img {
+        width:100%;
+        max-width:120px;
+      }
+
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <h3>🏥 CRM</h3>
+  <button onclick="showPatients()">Patients</button>
+  <button onclick="showDashboard()">Dashboard</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
+<div class="main">
+
+<input type="hidden" id="index">
+
+<!-- DASHBOARD -->
+<div id="dashboardSection">
+
+<div class="section">
+<div class="grid">
+
+<input id="name" placeholder="Patient Name">
+<input id="age" placeholder="Age">
+
+<select id="gender">
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
+
+<input id="phone" placeholder="Phone">
+
+<input id="address" placeholder="Address">
+<input id="city" placeholder="City">
+
+<select id="department">
+<option>General Medicine</option>
+<option>Cardiology</option>
+<option>Neurology</option>
+<option>Orthopedics</option>
+<option>Dermatology</option>
+<option>ENT</option>
+<option>Gynecology</option>
+<option>Pediatrics</option>
+<option>Oncology</option>
+<option>Radiology</option>
+<option>ICU</option>
+<option>Emergency</option>
+<option>Urology</option>
+<option>Nephrology</option>
+<option>Psychiatry</option>
+</select>
+
+<!-- DOCTOR -->
+<input id="doctor" list="doctorList" placeholder="Doctor Name">
+<datalist id="doctorList">
+<option value="Dr. Sharma">
+<option value="Dr. Khan">
+<option value="Dr. Singh">
+<option value="Dr. Gupta">
+</datalist>
+
+<select id="status">
+<option>OPD</option>
+<option>IPD</option>
+<option>ICU</option>
+<option>Discharged</option>
+<option>Under Observation</option>
+</select>
+
+<select id="category">
+<option>Routine Checkup</option>
+<option>Emergency Case</option>
+<option>Surgery Case</option>
+<option>Critical Care</option>
+<option>Follow-up Case</option>
+<option>Accident / Trauma</option>
+</select>
+
+<select id="priority">
+<option>Low</option>
+<option>Medium</option>
+<option>High</option>
+<option>Critical</option>
+</select>
+
+<input id="bed" placeholder="Bed / Ward">
+<input id="disease" placeholder="Disease">
+<input id="treatment" placeholder="Treatment">
+
+</div>
+</div>
+
+<div class="section">
+
+<div class="grid">
+<input id="followup" type="date">
+<input id="insurance" placeholder="Insurance">
+</div>
+
+<textarea id="notes" placeholder="Notes"></textarea>
+
+<input type="file" id="media" multiple>
+<button onclick="submitData()">Save Patient</button>
+
+</div>
+
+</div>
+
+<!-- PATIENT LIST -->
+<div id="patientsSection" style="display:none;">
+<input id="search" placeholder="Search..." onkeyup="loadPatients()">
+<div id="list"></div>
+</div>
+
+</div>
+
+<script>
+
+let patientsData=[];
+
+function showPatients(){
+  dashboardSection.style.display="none";
+  patientsSection.style.display="block";
+  loadPatients();
+}
+
+function showDashboard(){
+  dashboardSection.style.display="block";
+  patientsSection.style.display="none";
+}
+
+function logout(){
+  localStorage.removeItem("loggedIn");
+  window.location.href="/login.html";
+}
+
+// SAVE
+async function submitData(){
+
+const formData=new FormData();
+formData.append("index",index.value);
+
+const fields = [
+"name","age","gender","phone","address","city",
+"department","doctor","status","category","priority",
+"bed","disease","treatment","followup","insurance","notes"
+];
+
+fields.forEach(id=>{
+const el=document.getElementById(id);
+formData.append(id, el ? el.value : "");
+});
+
+const files=media.files;
+for(let i=0;i<files.length;i++){
+formData.append("media",files[i]);
+}
+
+await fetch("/add-patient",{method:"POST",body:formData});
+alert("Saved Successfully");
+}
+
+// LOAD
+async function loadPatients(){
+
+const res=await fetch("/patients");
+const data=await res.json();
+
+patientsData=data;
+
+let html="";
+
+data.forEach((p,i)=>{
+
+html+=`
+<div class="patient">
+
+<b>${p.name || ""}</b> (${p.age || ""})<br>
+${p.department || ""} | ${p.status || ""} | ${p.priority || ""}<br>
+Doctor: ${p.doctor || ""}<br>
+`;
+
+if(p.media && p.media.length){
+p.media.forEach(f=>{
+html+=`
+<div>
+<img src="/uploads/${f}">
+<a href="/uploads/${f}" download>
+<button class="icon"><i class="fa fa-download"></i></button>
+</a>
+</div>
+`;
+});
+}
+
+html+=`
+
+<br>
+
+<button class="icon" onclick="editPatient(${i})"><i class="fa fa-edit"></i></button>
+<button class="icon" onclick="deletePatient(${i})"><i class="fa fa-trash"></i></button>
+<button class="icon" onclick="downloadPatient(${i})"><i class="fa fa-file-pdf"></i></button>
+<button class="icon" onclick="shareWhatsApp(${i})"><i class="fa fa-whatsapp"></i></button>
+
+<div id="qr${i}"></div>
+
+</div>
+`;
+});
+
+list.innerHTML=html;
+
+// QR
+setTimeout(()=>{
+data.forEach((p,i)=>{
+const url = window.location.origin + "/patient.html?id=" + i;
+QRCode.toCanvas(document.getElementById("qr"+i), url);
+});
+},200);
+}
+
+// EDIT
+function editPatient(i){
+const p=patientsData[i];
+index.value=i;
+
+Object.keys(p).forEach(key=>{
+const el=document.getElementById(key);
+if(el){
+el.value=p[key] || "";
+}
+});
+
+showDashboard();
+}
+
+// DELETE
+async function deletePatient(i){
+if(!confirm("Delete?")) return;
+
+await fetch("/delete-patient",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({index:i})
+});
+
+loadPatients();
+}
+
+// REPORT
+function downloadPatient(i){
+
+const p = patientsData[i];
+
+let images="";
+if(p.media){
+p.media.forEach(f=>{
+images+=`<img src="/uploads/${f}" style="width:90px;">`;
+});
+}
+
+const content = `
+<html>
+<body style="font-family:Arial;padding:20px;">
+<img src="/logo.png" style="position:fixed;top:30%;left:30%;width:300px;opacity:0.08;">
+<h2>PANCARDIA HOSPITAL</h2>
+<hr>
+<table border="1" cellpadding="6" width="100%">
+<tr><td>Name</td><td>${p.name || ""}</td></tr>
+<tr><td>Age</td><td>${p.age || ""}</td></tr>
+<tr><td>Phone</td><td>${p.phone || ""}</td></tr>
+<tr><td>Department</td><td>${p.department || ""}</td></tr>
+<tr><td>Status</td><td>${p.status || ""}</td></tr>
+<tr><td>Doctor</td><td>${p.doctor || ""}</td></tr>
+<tr><td>Disease</td><td>${p.disease || ""}</td></tr>
+<tr><td>Treatment</td><td>${p.treatment || ""}</td></tr>
+<tr><td>Priority</td><td>${p.priority || ""}</td></tr>
+<tr><td>Follow-up</td><td>${p.followup || ""}</td></tr>
+<tr><td>Notes</td><td>${p.notes || ""}</td></tr>
+</table>
+<h3>Media</h3>
+${images}
+</body>
+</html>
+`;
+
+const win = window.open("");
+win.document.write(content);
+win.document.close();
+win.print();
+}
+
+// WHATSAPP
+function shareWhatsApp(i){
+const p=patientsData[i];
+
+const msg=`Patient Report
+Name: ${p.name || ""}
+Doctor: ${p.doctor || ""}
+Treatment: ${p.treatment || ""}`;
+
+window.open("https://wa.me/?text="+encodeURIComponent(msg));
+}
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service-worker.js");
+}
+</script>
+
+</body>
+</html>
