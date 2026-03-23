@@ -9,6 +9,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
 app.use("/uploads", express.static("uploads"));
 
 if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
